@@ -1,12 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Unidad IV: Interoperabilidad entre sistemas operativos. </title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog Técnico - Sistemas Operativos</title>
+  <style>
+    body { font-family: sans-serif; margin: 0; padding: 0; line-height: 1.6; }
+    header { background: #222; color: white; padding: 1rem; text-align: center; }
+    nav { background: #444; color: white; display: flex; justify-content: center; gap: 1rem; padding: 0.5rem; }
+    nav a { color: white; text-decoration: none; font-weight: bold; }
+    section { padding: 2rem; border-bottom: 1px solid #ccc; }
+    h2 { color: #333; }
+    .boton { display: inline-block; padding: 0.5rem 1rem; background: #007BFF; color: white; text-decoration: none; border-radius: 5px; margin-top: 0.5rem; }
+    .boton:hover { background: #0056b3; }
+  </style>
 </head>
 <body>
-  <h1>Unidad IV: Interoperabilidad entre sistemas operativos</h1>
-  <p>En esta unidad, exploraremos cómo los sistemas operativos pueden interactuar entre sí y cómo se pueden integrar diferentes plataformas para trabajar juntas de manera eficiente.</p>
+
+  <header>
+    <h1>Blog Técnico: Fundamentos de Sistemas Operativos</h1>
+    <p>Explora conceptos clave como interoperabilidad, archivos NFS, sockets y RCP.</p>
+  </header>
+
+  <nav>
+    <a href="#interoperabilidad">Interoperabilidad</a>
+    <a href="#nfs">Archivos NFS</a>
+    <a href="#sockets">Sockets</a>
+    <a href="#rcp">RCP</a>
+  </nav>
+
+  <main>
+
+    <section id="interoperabilidad">
+      <h2>Interoperabilidad de los Sistemas Operativos</h2>
+      <p>
+        La interoperabilidad permite que distintos sistemas operativos trabajen juntos compartiendo datos, servicios y recursos.
+        Es clave en entornos heterogéneos donde conviven Linux, Windows, Mac, etc.
+      </p>
+      <a class="boton" href="interoperabilidad.html">Ver más</a>
+    </section>
+
+    <section id="nfs">
+      <h2>Gestión de Archivos con NFS</h2>
+      <p>
+        NFS (Network File System) es un protocolo que permite compartir archivos entre sistemas a través de una red, como si fueran locales.
+        Muy usado en entornos Linux y Unix.
+      </p>
+      <a class="boton" href="nfs.html">Ver más</a>
+    </section>
+
+    <section id="sockets">
+      <h2>¿Qué son los Sockets?</h2>
+      <p>
+        Los sockets son una forma de comunicación entre procesos, ya sea en la misma máquina o a través de redes.
+        Son la base de muchas aplicaciones cliente-servidor.
+      </p>
+      <a class="boton" href="sockets.html">Ver más</a>
+    </section>
+
+    <section id="rcp">
+      <h2>RCP: Llamadas a Procedimientos Remotos</h2>
+      <p>
+        RCP (Remote Procedure Call) permite ejecutar funciones o procedimientos en otras máquinas como si fueran locales.
+        Esencial para sistemas distribuidos.
+      </p>
+      <a class="boton" href="rcp.html">Ver más</a>
+    </section>
+
+  </main>
+
 </body>
 </html>
