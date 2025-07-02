@@ -1,11 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestion de archivos NFS</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gestión de Archivos con NFS</title>
+  <link rel="stylesheet" href="../global-view.css" />
 </head>
 <body>
+
+  <header>
     <h1>Gestión de Archivos con NFS</h1>
+    <p>Protocolo para compartir archivos en red y facilitar el acceso remoto.</p>
+  </header>
+
+  <main class="contenedor">
+
+    <section>
+      <h2>¿Qué es NFS?</h2>
+      <p>
+        NFS (Network File System) es un protocolo desarrollado por Sun Microsystems que permite a los usuarios acceder a archivos a través de una red como si estuvieran almacenados localmente.
+        Es común en sistemas Unix y Linux.
+      </p>
+    </section>
+
+    <section>
+      <h2>Características principales</h2>
+      <ul>
+        <li>Permite montar directorios remotos como si fueran locales.</li>
+        <li>Soporta múltiples clientes simultáneamente.</li>
+        <li>Basado en protocolos TCP/IP para comunicación.</li>
+        <li>Funciona con permisos y controles de acceso del sistema de archivos.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Ventajas de usar NFS</h2>
+      <ul>
+        <li>Centralización del almacenamiento y gestión.</li>
+        <li>Facilita la colaboración y compartición de datos.</li>
+        <li>Reduce la duplicidad de archivos.</li>
+        <li>Transparencia para el usuario final.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Componentes de NFS</h2>
+      <p>
+        NFS consta de tres componentes clave:
+      </p>
+      <ul>
+        <li><strong>Servidor NFS:</strong> Máquina que comparte sus archivos.</li>
+        <li><strong>Cliente NFS:</strong> Máquina que accede a los archivos compartidos.</li>
+        <li><strong>Protocolo de transporte:</strong> Generalmente TCP o UDP.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Funcionamiento básico</h2>
+      <p>
+        El cliente NFS solicita acceso a archivos mediante llamadas a procedimientos remotos (RPC) al servidor, que responde con los datos solicitados, permitiendo operaciones de lectura, escritura y gestión.
+      </p>
+    </section>
+
+    <section>
+      <h2>Ejemplo práctico</h2>
+      <p>
+        En una red de oficinas, un servidor central puede compartir una carpeta con todos los empleados usando NFS, de modo que cada usuario puede acceder y modificar documentos sin necesidad de copias locales.
+      </p>
+    </section>
+
+    <section>
+      <h2>Limitaciones</h2>
+      <ul>
+        <li>Dependencia de la red: si la conexión falla, el acceso a archivos se interrumpe.</li>
+        <li>Problemas de seguridad si no se configura adecuadamente.</li>
+        <li>Puede no ser la mejor opción en redes lentas o inestables.</li>
+      </ul>
+    </section>
+
+    <div class="volver">
+      <a href="../../index.html">← Volver al inicio</a>
+    </div>
+
+  </main>
+
 </body>
 </html>

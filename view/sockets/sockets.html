@@ -1,11 +1,63 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sockets</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>¿Qué son los Sockets?</title>
+  <link rel="stylesheet" href="../global-view.css" />
 </head>
 <body>
+
+  <header>
     <h1>¿Qué son los Sockets?</h1>
+    <p>Fundamentos de la comunicación entre procesos en redes y sistemas locales.</p>
+  </header>
+
+  <main class="contenedor">
+
+    <section>
+      <h2>Definición de Sockets</h2>
+      <p>
+        Un socket es un punto final para enviar o recibir datos a través de una red. Facilita la comunicación entre dos procesos, ya sea en la misma máquina o en diferentes dispositivos conectados.
+      </p>
+    </section>
+
+    <section>
+      <h2>Tipos principales de Sockets</h2>
+      <ul>
+        <li><strong>Socket TCP:</strong> Orientado a conexión, garantiza la entrega y orden de los datos.</li>
+        <li><strong>Socket UDP:</strong> No orientado a conexión, rápido pero no garantiza entrega.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Funcionamiento básico</h2>
+      <p>
+        Los sockets usan direcciones IP y números de puerto para establecer la comunicación. Un proceso “escucha” en un puerto esperando conexiones, mientras otro “se conecta” para intercambiar información.
+      </p>
+    </section>
+
+    <section>
+      <h2>Aplicaciones prácticas</h2>
+      <p>
+        Los sockets son la base de muchas aplicaciones de red, como navegadores web, clientes de correo, juegos en línea y sistemas de mensajería instantánea.
+      </p>
+    </section>
+
+    <section>
+      <h2>Ventajas</h2>
+      <ul>
+        <li>Comunicación directa y eficiente entre procesos.</li>
+        <li>Flexibilidad para distintos protocolos y aplicaciones.</li>
+        <li>Base para sistemas cliente-servidor modernos.</li>
+      </ul>
+    </section>
+
+    <div class="volver">
+      <a href="../../index.html">← Volver al inicio</a>
+    </div>
+
+  </main>
+
 </body>
 </html>

@@ -1,11 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Remote Copy Protocol</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RCP (Remote Copy Protocol)</title>
+  <link rel="stylesheet" href="../global-view.css" />
 </head>
 <body>
+
+  <header>
     <h1>RCP (Remote Copy Protocol)</h1>
+    <p>Protocolo para copiar archivos entre máquinas remotas en una red.</p>
+  </header>
+
+  <main class="contenedor">
+
+    <section>
+      <h2>¿Qué es RCP?</h2>
+      <p>
+        RCP (Remote Copy Protocol) es un protocolo antiguo que permite la copia de archivos entre sistemas en una red utilizando comandos simples.
+        Facilita transferencias directas sin necesidad de autenticación avanzada.
+      </p>
+    </section>
+
+    <section>
+      <h2>Funcionamiento básico</h2>
+      <p>
+        El usuario ejecuta un comando que especifica el archivo origen y el destino remoto. El protocolo utiliza TCP para establecer conexión y realizar la transferencia.
+      </p>
+    </section>
+
+    <section>
+      <h2>Características</h2>
+      <ul>
+        <li>Permite copiar archivos entre hosts en una red local o remota.</li>
+        <li>No cifra la transferencia, por lo que no es seguro para redes públicas.</li>
+        <li>Fue ampliamente usado en sistemas Unix tradicionales.</li>
+        <li>Simplicidad en su implementación y uso.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Limitaciones</h2>
+      <ul>
+        <li>Falta de cifrado y autenticación robusta.</li>
+        <li>Reemplazado en gran medida por protocolos más seguros como SCP o SFTP.</li>
+        <li>No soporta operaciones avanzadas ni manejo de errores sofisticados.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Alternativas modernas</h2>
+      <p>
+        Protocolos como SCP (Secure Copy) y SFTP (SSH File Transfer Protocol) ofrecen transferencia segura y autenticación, reemplazando al RCP en la mayoría de los casos.
+      </p>
+    </section>
+
+    <div class="volver">
+      <a href="../../index.html">← Volver al inicio</a>
+    </div>
+
+  </main>
+
 </body>
 </html>
