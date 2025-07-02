@@ -1,66 +1,427 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>RCP (Remote Copy Protocol)</title>
-  <link rel="stylesheet" href="../global-view.css" />
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <title>RCP (Remote Copy Protocol)</title>
+ <link rel="stylesheet" href="../global-view.css" />
+ <link rel="stylesheet" href="rcp.css" />
 </head>
 <body>
+ <header>
+ <h1>RCP (Remote Copy Protocol)</h1>
+ <p>Protocolo histórico para transferencia de archivos remotos y su evolución hacia alternativas seguras.</p>
+ </header>
+ 
+ <main class="contenedor">
+   <section>
+     <h2>¿Qué es RCP?</h2>
+     <p>
+       RCP (Remote Copy Protocol) es un protocolo de transferencia de archivos desarrollado en los años 1980 
+       como parte del conjunto de herramientas Berkeley r-commands (rsh, rlogin, rcp). Permite la copia de 
+       archivos entre sistemas Unix y Linux a través de la red, utilizando una sintaxis similar al comando 
+       local <code>cp</code> pero extendida para operaciones remotas.
+     </p>
+     <div class="highlight-box">
+       <strong>Contexto histórico:</strong> RCP fue diseñado en una época donde las redes eran principalmente 
+       internas y confiables, por lo que la seguridad no era una preocupación primaria. Formaba parte de la 
+       suite BSD (Berkeley Software Distribution) y se convirtió en estándar en entornos Unix.
+     </div>
+     <p>
+       El protocolo utiliza TCP como transporte y se basa en el concepto de "hosts confiables" definidos 
+       en archivos como <code>/etc/hosts.equiv</code> y <code>~/.rhosts</code> para la autenticación, 
+       lo que en retrospectiva presenta serios riesgos de seguridad.
+     </p>
+   </section>
 
-  <header>
-    <h1>RCP (Remote Copy Protocol)</h1>
-    <p>Protocolo para copiar archivos entre máquinas remotas en una red.</p>
-  </header>
+   <section>
+     <h2>Evolución histórica y estado actual</h2>
+     <div class="timeline">
+       <div class="timeline-item">
+         <strong>1983:</strong> Desarrollo inicial como parte de BSD 4.2
+       </div>
+       <div class="timeline-item">
+         <strong>1985-1995:</strong> Amplia adopción en entornos Unix corporativos
+       </div>
+       <div class="timeline-item">
+         <strong>1995-2000:</strong> Primeras preocupaciones serias de seguridad
+       </div>
+       <div class="timeline-item">
+         <strong>2000-2005:</strong> Reemplazo gradual por SSH/SCP
+       </div>
+       <div class="timeline-item">
+         <strong>2005-presente:</strong> <span class="status-badge deprecated">DEPRECATED</span> Considerado obsoleto y peligroso
+       </div>
+     </div>
+     
+     <div class="danger-box">
+       <strong>Estado actual:</strong> RCP está oficialmente deprecado y se considera inseguro para cualquier 
+       uso en producción. La mayoría de distribuciones modernas no lo incluyen por defecto debido a sus 
+       vulnerabilidades de seguridad inherentes.
+     </div>
+   </section>
 
-  <main class="contenedor">
+   <section>
+     <h2>Arquitectura y funcionamiento técnico</h2>
+     
+     <h3>Componentes del sistema</h3>
+     <div class="protocol-grid">
+       <div class="protocol-card">
+         <h4>Cliente RCP</h4>
+         <p>Programa que inicia la transferencia de archivos, similar a un cliente FTP pero más simple.</p>
+       </div>
+       <div class="protocol-card">
+         <h4>Servidor RCP</h4>
+         <p>Demonio que ejecuta comandos remotos (generalmente rshd) y maneja las transferencias.</p>
+       </div>
+       <div class="protocol-card">
+         <h4>Mecanismo de autenticación</h4>
+         <p>Basado en archivos .rhosts y hosts.equiv, sin cifrado ni autenticación robusta.</p>
+       </div>
+       <div class="protocol-card">
+         <h4>Protocolo de transporte</h4>
+         <p>TCP en puerto 514 (shell), sin cifrado ni protección de integridad.</p>
+       </div>
+     </div>
 
-    <section>
-      <h2>¿Qué es RCP?</h2>
-      <p>
-        RCP (Remote Copy Protocol) es un protocolo antiguo que permite la copia de archivos entre sistemas en una red utilizando comandos simples.
-        Facilita transferencias directas sin necesidad de autenticación avanzada.
-      </p>
-    </section>
+     <h3>Flujo de operación</h3>
+     <p>
+       El proceso RCP sigue estos pasos: 1) El cliente contacta al servidor remoto a través de rsh, 
+       2) Se verifica la autenticación mediante archivos de hosts confiables, 3) Se establece una 
+       conexión TCP para la transferencia de datos, 4) Los archivos se copian en texto plano, 
+       5) La conexión se cierra sin verificación de integridad.
+     </p>
+   </section>
 
-    <section>
-      <h2>Funcionamiento básico</h2>
-      <p>
-        El usuario ejecuta un comando que especifica el archivo origen y el destino remoto. El protocolo utiliza TCP para establecer conexión y realizar la transferencia.
-      </p>
-    </section>
+   <section>
+     <h2>Sintaxis y comandos básicos</h2>
+     
+     <h3>Estructura del comando</h3>
+     <div class="command-box">
+       # Sintaxis básica
+       rcp [opciones] origen destino
+       
+       # Ejemplos de uso (SOLO PARA REFERENCIA HISTÓRICA)
+       rcp archivo.txt usuario@servidor:/ruta/destino/
+       rcp usuario@servidor1:/archivo.txt usuario@servidor2:/destino/
+       rcp -r directorio/ usuario@servidor:/ruta/destino/
+     </div>
 
-    <section>
-      <h2>Características</h2>
-      <ul>
-        <li>Permite copiar archivos entre hosts en una red local o remota.</li>
-        <li>No cifra la transferencia, por lo que no es seguro para redes públicas.</li>
-        <li>Fue ampliamente usado en sistemas Unix tradicionales.</li>
-        <li>Simplicidad en su implementación y uso.</li>
-      </ul>
-    </section>
+     <h3>Opciones principales</h3>
+     <ul>
+       <li><strong>-r:</strong> Copia recursiva de directorios</li>
+       <li><strong>-p:</strong> Preserva tiempos de modificación y permisos</li>
+       <li><strong>-k:</strong> Especifica el realm Kerberos (en implementaciones que lo soportan)</li>
+       <li><strong>-x:</strong> Activa cifrado DES (disponible solo en algunas implementaciones)</li>
+     </ul>
 
-    <section>
-      <h2>Limitaciones</h2>
-      <ul>
-        <li>Falta de cifrado y autenticación robusta.</li>
-        <li>Reemplazado en gran medida por protocolos más seguros como SCP o SFTP.</li>
-        <li>No soporta operaciones avanzadas ni manejo de errores sofisticados.</li>
-      </ul>
-    </section>
+     <div class="warning-box">
+       <strong>Advertencia:</strong> Estos comandos se muestran únicamente con fines educativos e históricos. 
+       NO deben usarse en sistemas de producción debido a graves vulnerabilidades de seguridad.
+     </div>
+   </section>
 
-    <section>
-      <h2>Alternativas modernas</h2>
-      <p>
-        Protocolos como SCP (Secure Copy) y SFTP (SSH File Transfer Protocol) ofrecen transferencia segura y autenticación, reemplazando al RCP en la mayoría de los casos.
-      </p>
-    </section>
+   <section>
+     <h2>Características técnicas detalladas</h2>
+     
+     <h3>Ventajas históricas</h3>
+     <ul>
+       <li><strong>Simplicidad de uso:</strong> Sintaxis intuitiva similar a comandos locales</li>
+       <li><strong>Integración nativa:</strong> Incluido por defecto en sistemas Unix clásicos</li>
+       <li><strong>Bajo overhead:</strong> Protocolo ligero sin cifrado que consume pocos recursos</li>
+       <li><strong>Transferencias recursivas:</strong> Soporte nativo para directorios completos</li>
+       <li><strong>Preservación de metadatos:</strong> Mantiene permisos y timestamps originales</li>
+     </ul>
 
-    <div class="volver">
-      <a href="../../index.html">← Volver al inicio</a>
-    </div>
+     <h3>Limitaciones fundamentales</h3>
+     <ul>
+       <li><strong>Transmisión en texto plano:</strong> Datos y credenciales sin cifrado</li>
+       <li><strong>Autenticación débil:</strong> Basada únicamente en confianza de hosts</li>
+       <li><strong>Sin verificación de integridad:</strong> No detecta corrupciones o manipulaciones</li>
+       <li><strong>Vulnerable a ataques:</strong> Man-in-the-middle, sniffing, spoofing</li>
+       <li><strong>Dependencia de rsh:</strong> Requiere servicios r-commands habilitados</li>
+     </ul>
+   </section>
 
-  </main>
+   <section>
+     <h2>Vulnerabilidades y riesgos de seguridad</h2>
+     
+     <div class="danger-box">
+       <h4>Vulnerabilidades críticas identificadas</h4>
+       <ul>
+         <li><strong>CVE-1999-0651:</strong> Exposición de credenciales en tráfico de red</li>
+         <li><strong>CVE-2001-0554:</strong> Ataques de suplantación de identidad</li>
+         <li><strong>CVE-1999-0166:</strong> Escalación de privilegios mediante .rhosts</li>
+         <li><strong>CVE-2008-1447:</strong> Ataques de cache poisoning DNS</li>
+       </ul>
+     </div>
 
+     <h3>Vectores de ataque comunes</h3>
+     <ul>
+       <li><strong>Sniffing de red:</strong> Intercepción de credenciales y datos en tránsito</li>
+       <li><strong>Man-in-the-middle:</strong> Modificación de datos durante la transferencia</li>
+       <li><strong>Host spoofing:</strong> Suplantación de servidores confiables</li>
+       <li><strong>Privilege escalation:</strong> Manipulación de archivos .rhosts</li>
+       <li><strong>Replay attacks:</strong> Reutilización de sesiones capturadas</li>
+     </ul>
+
+     <h3>Impacto de seguridad</h3>
+     <div class="danger-box">
+       <strong>Consecuencias potenciales:</strong> Compromiso total de sistemas, robo de datos sensibles, 
+       escalación de privilegios, instalación de malware, y creación de backdoors permanentes en la red.
+     </div>
+   </section>
+
+   <section>
+     <h2>Configuración histórica (solo referencia)</h2>
+     
+     <h3>Archivos de configuración principales</h3>
+     <div class="command-box">
+       # /etc/hosts.equiv (configuración global)
+       servidor1.empresa.com
+       servidor2.empresa.com
+       +@grupo_confiable
+       
+       # ~/.rhosts (configuración por usuario)
+       servidor1.empresa.com usuario1
+       servidor2.empresa.com usuario2
+       
+       # /etc/inetd.conf (habilitación del servicio)
+       shell stream tcp nowait root /usr/sbin/rshd rshd
+     </div>
+
+     <h3>Servicios relacionados</h3>
+     <ul>
+       <li><strong>rshd:</strong> Demonio que ejecuta comandos remotos</li>
+       <li><strong>inetd/xinetd:</strong> Super-demonio que gestiona servicios de red</li>
+       <li><strong>portmap:</strong> Mapeador de puertos para servicios RPC</li>
+     </ul>
+
+     <div class="warning-box">
+       <strong>Nota importante:</strong> Esta información se proporciona únicamente para comprensión histórica 
+       y análisis de seguridad. Nunca implemente estas configuraciones en sistemas actuales.
+     </div>
+   </section>
+
+   <section>
+     <h2>Casos de uso históricos</h2>
+     
+     <div class="example-box">
+       <h4>Entornos de desarrollo Unix (1980s-1990s)</h4>
+       <p>Equipos de desarrollo que compartían código fuente entre estaciones de trabajo Sun, 
+       utilizando RCP para sincronizar archivos entre sistemas de desarrollo y servidores de compilación.</p>
+     </div>
+
+     <div class="example-box">
+       <h4>Clusters de cómputo científico</h4>
+       <p>Laboratorios de investigación que distribuían datos experimentales y resultados de simulación 
+       entre nodos de cálculo, aprovechando la simplicidad de RCP para transferencias automatizadas.</p>
+     </div>
+
+     <div class="example-box">
+       <h4>Sistemas de backup distribuido</h4>
+       <p>Implementaciones de respaldo que utilizaban RCP para replicar archivos críticos entre 
+       servidores, antes de la adopción de soluciones de backup más sofisticadas.</p>
+     </div>
+   </section>
+
+   <section>
+     <h2>Migración a alternativas seguras</h2>
+     
+     <h3>Proceso de migración recomendado</h3>
+     <ul>
+       <li><strong>Auditoría de uso:</strong> Identificar todos los scripts y procesos que usan RCP</li>
+       <li><strong>Inventario de transferencias:</strong> Catalogar patrones de transferencia de archivos</li>
+       <li><strong>Evaluación de alternativas:</strong> Seleccionar reemplazos apropiados (SCP, SFTP, rsync)</li>
+       <li><strong>Configuración de SSH:</strong> Implementar infraestructura de clave pública</li>
+       <li><strong>Migración gradual:</strong> Reemplazar sistemas por fases</li>
+       <li><strong>Deshabilitación completa:</strong> Eliminar r-commands definitivamente</li>
+     </ul>
+
+     <div class="command-box">
+       # Comandos para deshabilitar RCP (sistemas legacy)
+       # Deshabilitar en inetd/xinetd
+       sudo systemctl stop rsh.socket
+       sudo systemctl disable rsh.socket
+       
+       # Remover archivos de configuración
+       sudo rm -f /etc/hosts.equiv
+       sudo find /home -name .rhosts -delete
+       
+       # Desinstalar paquetes
+       sudo apt remove rsh-client rsh-server    # Debian/Ubuntu
+       sudo yum remove rsh                      # RHEL/CentOS
+     </div>
+   </section>
+
+   <section>
+     <h2>Alternativas modernas y comparación</h2>
+     
+     <table class="comparison-table">
+       <thead>
+         <tr>
+           <th>Protocolo</th>
+           <th>Seguridad</th>
+           <th>Rendimiento</th>
+           <th>Funcionalidades</th>
+           <th>Recomendación</th>
+         </tr>
+       </thead>
+       <tbody>
+         <tr>
+           <td>RCP <span class="status-badge deprecated">DEPRECATED</span></td>
+           <td>❌ Inseguro</td>
+           <td>⚡ Rápido</td>
+           <td>📁 Básico</td>
+           <td>🚫 No usar</td>
+         </tr>
+         <tr>
+           <td>SCP <span class="status-badge secure">SECURE</span></td>
+           <td>✅ Cifrado SSH</td>
+           <td>⚡ Rápido</td>
+           <td>📁 Básico</td>
+           <td>✅ Recomendado</td>
+         </tr>
+         <tr>
+           <td>SFTP <span class="status-badge secure">SECURE</span></td>
+           <td>✅ Cifrado SSH</td>
+           <td>⚡ Rápido</td>
+           <td>📁 Avanzado</td>
+           <td>✅ Recomendado</td>
+         </tr>
+         <tr>
+           <td>rsync <span class="status-badge secure">SECURE</span></td>
+           <td>✅ Cifrado SSH</td>
+           <td>⚡ Muy rápido</td>
+           <td>📁 Sincronización</td>
+           <td>✅ Ideal para backup</td>
+         </tr>
+         <tr>
+           <td>FTPS <span class="status-badge secure">SECURE</span></td>
+           <td>✅ Cifrado TLS</td>
+           <td>⚡ Rápido</td>
+           <td>📁 Completo</td>
+           <td>✅ Para FTP legacy</td>
+         </tr>
+       </tbody>
+     </table>
+
+     <h3>Recomendaciones específicas por uso</h3>
+     <div class="protocol-grid">
+       <div class="protocol-card">
+         <h4>SCP (Secure Copy)</h4>
+         <p><strong>Mejor para:</strong> Reemplazo directo de RCP, transferencias simples entre sistemas Unix/Linux.</p>
+         <div class="command-box">scp archivo.txt usuario@servidor:/ruta/destino/</div>
+       </div>
+       <div class="protocol-card">
+         <h4>SFTP (SSH File Transfer Protocol)</h4>
+         <p><strong>Mejor para:</strong> Transferencias interactivas, gestión de archivos remotos, scripts complejos.</p>
+         <div class="command-box">sftp usuario@servidor</div>
+       </div>
+       <div class="protocol-card">
+         <h4>rsync sobre SSH</h4>
+         <p><strong>Mejor para:</strong> Sincronización de directorios, backups incrementales, redes lentas.</p>
+         <div class="command-box">rsync -avz -e ssh /local/ usuario@servidor:/remoto/</div>
+       </div>
+       <div class="protocol-card">
+         <h4>HTTPS/WebDAV</h4>
+         <p><strong>Mejor para:</strong> Transferencias web, integración con aplicaciones modernas, APIs REST.</p>
+         <div class="command-box">curl -T archivo.txt https://servidor/webdav/</div>
+       </div>
+     </div>
+   </section>
+
+   <section>
+     <h2>Consideraciones forenses y de auditoría</h2>
+     
+     <h3>Detección de uso de RCP</h3>
+     <div class="command-box">
+       # Buscar procesos RCP activos
+       ps aux | grep -i rcp
+       
+       # Verificar puertos abiertos
+       netstat -tulpn | grep :514
+       
+       # Examinar logs de sistema
+       grep -i rcp /var/log/syslog
+       grep -i rsh /var/log/auth.log
+       
+       # Buscar archivos de configuración
+       find / -name "hosts.equiv" -o -name ".rhosts" 2>/dev/null
+     </div>
+
+     <h3>Análisis de tráfico de red</h3>
+     <ul>
+       <li><strong>Firmas de tráfico:</strong> Conexiones TCP no cifradas en puerto 514</li>
+       <li><strong>Patrones de comportamiento:</strong> Transferencias de archivos en texto plano</li>
+       <li><strong>Indicadores de compromiso:</strong> Actividad RCP no autorizada</li>
+     </ul>
+
+     <div class="danger-box">
+       <strong>Implicaciones legales:</strong> El uso de protocolos inseguros como RCP puede violar 
+       regulaciones de protección de datos (GDPR, HIPAA, SOX) y exponer a organizaciones a 
+       responsabilidades legales en caso de brechas de seguridad.
+     </div>
+   </section>
+
+   <section>
+     <h2>Lecciones aprendidas y perspectiva histórica</h2>
+     
+     <h3>Importancia histórica</h3>
+     <p>
+       RCP representa un ejemplo clásico de cómo los requerimientos de seguridad evolucionan con el tiempo. 
+       Su diseño refleja las prioridades de una era donde las redes eran pequeñas, confiables y principalmente 
+       internas. La transición hacia alternativas seguras ilustra la importancia de diseñar sistemas con 
+       seguridad desde el principio.
+     </p>
+
+     <h3>Principios de diseño que perdura</h3>
+     <ul>
+       <li><strong>Simplicidad de interfaz:</strong> La sintaxis clara de RCP influyó en herramientas modernas</li>
+       <li><strong>Transparencia de red:</strong> Concepto adoptado por sistemas distribuidos actuales</li>
+       <li><strong>Operaciones atómicas:</strong> Transferencias completas o fallidas, sin estados intermedios</li>
+     </ul>
+
+     <div class="highlight-box">
+       <strong>Legado técnico:</strong> Aunque RCP está obsoleto, sus conceptos de simplicidad y transparencia 
+       de red influyeron en el desarrollo de protocolos modernos como SSH y herramientas como rsync.
+     </div>
+   </section>
+
+   <section>
+     <h2>Conclusión y recomendaciones finales</h2>
+     <p>
+       RCP (Remote Copy Protocol) representa una pieza importante de la historia de las redes Unix, 
+       demostrando tanto la evolución de las necesidades de seguridad como la importancia de adaptarse 
+       a las amenazas emergentes. Su simplicidad inicial se convirtió en su mayor debilidad cuando 
+       las redes se expandieron más allá de entornos controlados.
+     </p>
+     
+     <div class="danger-box">
+       <strong>Recomendación crítica:</strong> RCP NO debe utilizarse en ningún entorno de producción 
+       moderno. Su uso representa un riesgo inaceptable de seguridad que puede comprometer la integridad 
+       de sistemas completos.
+     </div>
+
+     <h3>Acciones inmediatas recomendadas</h3>
+     <ul>
+       <li><strong>Auditoría completa:</strong> Verificar que RCP no esté habilitado en ningún sistema</li>
+       <li><strong>Migración urgente:</strong> Reemplazar cualquier uso existente con alternativas seguras</li>
+       <li><strong>Educación del equipo:</strong> Capacitar sobre riesgos y alternativas modernas</li>
+       <li><strong>Monitoreo continuo:</strong> Implementar detección de protocolos inseguros</li>
+       <li><strong>Políticas de seguridad:</strong> Prohibir explícitamente el uso de r-commands</li>
+     </ul>
+
+     <p>
+       La historia de RCP nos enseña que la seguridad no es un estado fijo, sino un proceso continuo 
+       de evaluación y mejora. Las organizaciones modernas deben aprender de estos ejemplos históricos 
+       para tomar decisiones informadas sobre tecnologías actuales y futuras.
+     </p>
+   </section>
+
+   <div class="volver">
+     <a href="../../index.html">← Volver al inicio</a>
+   </div>
+ </main>
 </body>
 </html>

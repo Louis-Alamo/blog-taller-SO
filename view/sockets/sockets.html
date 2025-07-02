@@ -1,63 +1,414 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>¿Qué son los Sockets?</title>
-  <link rel="stylesheet" href="../global-view.css" />
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <title>¿Qué son los Sockets?</title>
+ <link rel="stylesheet" href="../global-view.css" />
+<link rel="stylesheet" href="sockets.css">
 </head>
 <body>
+ <header>
+ <h1>¿Qué son los Sockets?</h1>
+ <p>Fundamentos de la comunicación entre procesos en redes y sistemas locales distribuidos.</p>
+ </header>
+ 
+ <main class="contenedor">
+ <section>
+ <h2>Definición y conceptos fundamentales</h2>
+ <p>
+ Un socket es una abstracción de programación que representa un punto final de comunicación bidireccional 
+ entre dos procesos, ya sea en la misma máquina (comunicación local) o en diferentes dispositivos conectados 
+ a través de una red. Los sockets proporcionan una interfaz uniforme para el intercambio de datos, 
+ ocultando la complejidad subyacente de los protocolos de red.
+ </p>
+ <div class="highlight-box">
+ <strong>Definición técnica:</strong> Un socket es una combinación de una dirección IP y un número de puerto, 
+ que juntos forman un identificador único para un punto de comunicación en una red. Matemáticamente se 
+ expresa como: Socket = (Dirección IP, Puerto, Protocolo)
+ </div>
+ <p>
+ Los sockets fueron introducidos por primera vez en BSD Unix en los años 80 y se han convertido en el 
+ estándar de facto para la programación de red en sistemas Unix-like, Windows y prácticamente todos 
+ los sistemas operativos modernos.
+ </p>
+ </section>
 
-  <header>
-    <h1>¿Qué son los Sockets?</h1>
-    <p>Fundamentos de la comunicación entre procesos en redes y sistemas locales.</p>
-  </header>
+ <section>
+ <h2>Arquitectura y funcionamiento interno</h2>
+ 
+ <h3>Modelo cliente-servidor con sockets</h3>
+ <div class="socket-diagram">
+ Cliente                    Red                    Servidor<br>
+ ┌─────────┐             ┌─────────┐             ┌─────────┐<br>
+ │ socket()│────connect──│ Internet│──listen────│ socket()│<br>
+ │ connect │             │   TCP   │             │ bind()  │<br>
+ │ send()  │◄───data────►│   /IP   │◄───data────►│ accept()│<br>
+ │ recv()  │             │         │             │ recv()  │<br>
+ │ close() │             └─────────┘             │ send()  │<br>
+ └─────────┘                                     │ close() │<br>
+                                                 └─────────┘
+ </div>
 
-  <main class="contenedor">
+ <h3>Estados de un socket TCP</h3>
+ <p>Los sockets TCP pasan por varios estados durante su ciclo de vida:</p>
+ <ul>
+ <li><strong>CLOSED:</strong> Estado inicial, socket no está en uso</li>
+ <li><strong>LISTEN:</strong> Servidor esperando conexiones entrantes</li>
+ <li><strong>SYN_SENT:</strong> Cliente ha enviado solicitud de conexión</li>
+ <li><strong>ESTABLISHED:</strong> Conexión activa y datos pueden fluir</li>
+ <li><strong>FIN_WAIT:</strong> Proceso de cierre de conexión iniciado</li>
+ <li><strong>TIME_WAIT:</strong> Esperando que todos los paquetes sean procesados</li>
+ </ul>
+ </section>
 
-    <section>
-      <h2>Definición de Sockets</h2>
-      <p>
-        Un socket es un punto final para enviar o recibir datos a través de una red. Facilita la comunicación entre dos procesos, ya sea en la misma máquina o en diferentes dispositivos conectados.
-      </p>
-    </section>
+ <section>
+ <h2>Tipos detallados de sockets</h2>
+ 
+ <table class="comparison-table">
+ <thead>
+ <tr>
+ <th>Característica</th>
+ <th>TCP Sockets</th>
+ <th>UDP Sockets</th>
+ <th>Unix Domain Sockets</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+ <td><strong>Confiabilidad</strong></td>
+ <td>Garantizada (orientado a conexión)</td>
+ <td>No garantizada (mejor esfuerzo)</td>
+ <td>Garantizada (local)</td>
+ </tr>
+ <tr>
+ <td><strong>Velocidad</strong></td>
+ <td>Moderada (overhead de control)</td>
+ <td>Alta (mínimo overhead)</td>
+ <td>Muy alta (sin stack de red)</td>
+ </tr>
+ <tr>
+ <td><strong>Orden de datos</strong></td>
+ <td>Preservado</td>
+ <td>No garantizado</td>
+ <td>Preservado</td>
+ </tr>
+ <tr>
+ <td><strong>Detección de errores</strong></td>
+ <td>Automática con retransmisión</td>
+ <td>Básica (checksum)</td>
+ <td>A nivel de SO</td>
+ </tr>
+ <tr>
+ <td><strong>Uso típico</strong></td>
+ <td>HTTP, FTP, SMTP, SSH</td>
+ <td>DNS, DHCP, streaming</td>
+ <td>IPC local, bases de datos</td>
+ </tr>
+ </tbody>
+ </table>
 
-    <section>
-      <h2>Tipos principales de Sockets</h2>
-      <ul>
-        <li><strong>Socket TCP:</strong> Orientado a conexión, garantiza la entrega y orden de los datos.</li>
-        <li><strong>Socket UDP:</strong> No orientado a conexión, rápido pero no garantiza entrega.</li>
-      </ul>
-    </section>
+ <h3>Sockets especializados</h3>
+ <div class="protocol-grid">
+ <div class="protocol-card">
+ <h4>Raw Sockets</h4>
+ <p>Acceso directo a protocolos de red de bajo nivel, utilizados para implementar protocolos personalizados o herramientas de diagnóstico.</p>
+ </div>
+ <div class="protocol-card">
+ <h4>Multicast Sockets</h4>
+ <p>Permiten envío de datos a múltiples destinatarios simultáneamente, ideal para streaming y distribución de contenido.</p>
+ </div>
+ <div class="protocol-card">
+ <h4>Websockets</h4>
+ <p>Protocolo de comunicación full-duplex sobre HTTP, diseñado para aplicaciones web en tiempo real.</p>
+ </div>
+ <div class="protocol-card">
+ <h4>Sockets seguros (TLS/SSL)</h4>
+ <p>Capa de cifrado sobre sockets tradicionales para comunicación segura y autenticada.</p>
+ </div>
+ </div>
+ </section>
 
-    <section>
-      <h2>Funcionamiento básico</h2>
-      <p>
-        Los sockets usan direcciones IP y números de puerto para establecer la comunicación. Un proceso “escucha” en un puerto esperando conexiones, mientras otro “se conecta” para intercambiar información.
-      </p>
-    </section>
+ <section>
+ <h2>Programación de sockets</h2>
+ 
+ <h3>API básica de sockets (C/POSIX)</h3>
+ <div class="command-box">
+ // Servidor TCP básico
+ int server_fd = socket(AF_INET, SOCK_STREAM, 0);
+ bind(server_fd, (struct sockaddr*)&address, sizeof(address));
+ listen(server_fd, 3);
+ int client_fd = accept(server_fd, NULL, NULL);
+ 
+ // Cliente TCP básico  
+ int client_fd = socket(AF_INET, SOCK_STREAM, 0);
+ connect(client_fd, (struct sockaddr*)&server_addr, sizeof(server_addr));
+ send(client_fd, message, strlen(message), 0);
+ recv(client_fd, buffer, sizeof(buffer), 0);
+ </div>
 
-    <section>
-      <h2>Aplicaciones prácticas</h2>
-      <p>
-        Los sockets son la base de muchas aplicaciones de red, como navegadores web, clientes de correo, juegos en línea y sistemas de mensajería instantánea.
-      </p>
-    </section>
+ <h3>Operaciones fundamentales</h3>
+ <ul>
+ <li><strong>socket():</strong> Crea un nuevo socket y devuelve su descriptor</li>
+ <li><strong>bind():</strong> Asocia el socket con una dirección local específica</li>
+ <li><strong>listen():</strong> Marca el socket como pasivo, listo para aceptar conexiones</li>
+ <li><strong>accept():</strong> Acepta una conexión entrante y crea un nuevo socket</li>
+ <li><strong>connect():</strong> Establece conexión con un servidor remoto</li>
+ <li><strong>send()/recv():</strong> Envía y recibe datos a través del socket</li>
+ <li><strong>close():</strong> Cierra el socket y libera recursos</li>
+ </ul>
 
-    <section>
-      <h2>Ventajas</h2>
-      <ul>
-        <li>Comunicación directa y eficiente entre procesos.</li>
-        <li>Flexibilidad para distintos protocolos y aplicaciones.</li>
-        <li>Base para sistemas cliente-servidor modernos.</li>
-      </ul>
-    </section>
+ <h3>Programación asíncrona y multiplexing</h3>
+ <div class="protocol-grid">
+ <div class="protocol-card">
+ <h4>select()</h4>
+ <p>Monitorea múltiples sockets simultáneamente, bloqueando hasta que uno esté listo para I/O.</p>
+ </div>
+ <div class="protocol-card">
+ <h4>epoll (Linux)</h4>
+ <p>Mecanismo eficiente para monitorear miles de sockets con mejor rendimiento que select.</p>
+ </div>
+ <div class="protocol-card">
+ <h4>kqueue (BSD)</h4>
+ <p>Sistema de notificación de eventos escalable para I/O asíncrono en sistemas BSD.</p>
+ </div>
+ <div class="protocol-card">
+ <h4>IOCP (Windows)</h4>
+ <p>I/O Completion Ports, mecanismo de Windows para I/O asíncrono de alto rendimiento.</p>
+ </div>
+ </div>
+ </section>
 
-    <div class="volver">
-      <a href="../../index.html">← Volver al inicio</a>
-    </div>
+ <section>
+ <h2>Aplicaciones y casos de uso</h2>
+ 
+ <div class="example-box">
+ <h4>Servidores web y HTTP</h4>
+ <p>Apache, Nginx y otros servidores web utilizan sockets TCP para manejar solicitudes HTTP. 
+ Cada conexión de cliente se gestiona a través de un socket dedicado, permitiendo el servicio 
+ simultáneo de múltiples usuarios.</p>
+ </div>
 
-  </main>
+ <div class="example-box">
+ <h4>Bases de datos distribuidas</h4>
+ <p>MySQL, PostgreSQL y MongoDB utilizan sockets para comunicación cliente-servidor. 
+ Las conexiones persistentes permiten transacciones complejas y consultas eficientes 
+ a través de la red.</p>
+ </div>
 
+ <div class="example-box">
+ <h4>Sistemas de mensajería</h4>
+ <p>WhatsApp, Telegram y Slack utilizan sockets (especialmente WebSockets) para mensajería 
+ en tiempo real, notificaciones push y sincronización de estado entre dispositivos.</p>
+ </div>
+
+ <div class="example-box">
+ <h4>Gaming y aplicaciones en tiempo real</h4>
+ <p>Juegos multijugador como Fortnite o Counter-Strike utilizan UDP sockets para datos 
+ de juego rápidos y TCP sockets para información crítica como chat y estadísticas.</p>
+ </div>
+
+ <div class="example-box">
+ <h4>IoT y sistemas embebidos</h4>
+ <p>Dispositivos IoT utilizan sockets para reportar datos de sensores, recibir comandos 
+ remotos y participar en redes mesh. MQTT sobre TCP sockets es muy común.</p>
+ </div>
+ </section>
+
+ <section>
+ <h2>Rendimiento y optimización</h2>
+ 
+ <h3>Factores que afectan el rendimiento</h3>
+ <ul>
+ <li><strong>Tamaño del buffer:</strong> Buffers grandes reducen llamadas al sistema pero usan más memoria</li>
+ <li><strong>Algoritmo de Nagle:</strong> Combina pequeños paquetes TCP para eficiencia de red</li>
+ <li><strong>TCP Window Scaling:</strong> Permite ventanas de recepción más grandes para enlaces de alta latencia</li>
+ <li><strong>Keep-alive:</strong> Mantiene conexiones activas para evitar overhead de reconexión</li>
+ </ul>
+
+ <h3>Técnicas de optimización</h3>
+ <div class="command-box">
+ // Configuración de opciones de socket para rendimiento
+ int optval = 1;
+ setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
+ setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &optval, sizeof(optval));
+ 
+ // Ajustar tamaños de buffer
+ int bufsize = 65536;
+ setsockopt(sock, SOL_SOCKET, SO_RCVBUF, &bufsize, sizeof(bufsize));
+ setsockopt(sock, SOL_SOCKET, SO_SNDBUF, &bufsize, sizeof(bufsize));
+ </div>
+
+ <h3>Patrones de arquitectura escalables</h3>
+ <ul>
+ <li><strong>Thread per connection:</strong> Simple pero no escala para miles de conexiones</li>
+ <li><strong>Thread pool:</strong> Número fijo de threads procesa todas las conexiones</li>
+ <li><strong>Event-driven (epoll/kqueue):</strong> Un thread maneja miles de conexiones asíncrónicamente</li>
+ <li><strong>Actor model:</strong> Actores ligeros manejan conexiones individualmente</li>
+ </ul>
+ </section>
+
+ <section>
+ <h2>Seguridad en sockets</h2>
+ 
+ <h3>Vulnerabilidades comunes</h3>
+ <div class="warning-box">
+ <strong>Amenazas de seguridad:</strong>
+ <ul>
+ <li><strong>Buffer overflow:</strong> Datos excesivos pueden corromper memoria</li>
+ <li><strong>Inyección de comandos:</strong> Datos maliciosos ejecutados como comandos</li>
+ <li><strong>Man-in-the-middle:</strong> Interceptación de comunicaciones no cifradas</li>
+ <li><strong>DoS attacks:</strong> Saturación de sockets disponibles</li>
+ <li><strong>Port scanning:</strong> Reconocimiento de servicios expuestos</li>
+ </ul>
+ </div>
+
+ <h3>Medidas de seguridad</h3>
+ <ul>
+ <li><strong>Validación de entrada:</strong> Verificar todos los datos recibidos</li>
+ <li><strong>Cifrado TLS/SSL:</strong> Proteger datos en tránsito</li>
+ <li><strong>Autenticación mutua:</strong> Verificar identidad de ambas partes</li>
+ <li><strong>Rate limiting:</strong> Limitar conexiones por IP/usuario</li>
+ <li><strong>Firewalls:</strong> Filtrar tráfico no autorizado</li>
+ <li><strong>Monitoring:</strong> Detectar patrones de ataque</li>
+ </ul>
+ </section>
+
+ <section>
+ <h2>Herramientas de desarrollo y debugging</h2>
+ 
+ <h3>Herramientas de línea de comando</h3>
+ <div class="command-box">
+ # Verificar puertos abiertos
+ netstat -tulpn | grep :80
+ ss -tulpn | grep :80
+ 
+ # Testear conectividad
+ telnet servidor.com 80
+ nc -zv servidor.com 80-90
+ 
+ # Monitorear tráfico
+ tcpdump -i eth0 port 80
+ wireshark
+ 
+ # Analizar rendimiento
+ iperf3 -s    # servidor
+ iperf3 -c servidor.com    # cliente
+ </div>
+
+ <h3>Librerías y frameworks populares</h3>
+ <div class="protocol-grid">
+ <div class="protocol-card">
+ <h4>Node.js (net module)</h4>
+ <p>API de sockets asíncrona para JavaScript, ideal para aplicaciones de red escalables.</p>
+ </div>
+ <div class="protocol-card">
+ <h4>Python (socket module)</h4>
+ <p>Interfaz simple y poderosa para programación de sockets en Python.</p>
+ </div>
+ <div class="protocol-card">
+ <h4>Java (NIO)</h4>
+ <p>New I/O API para programación de sockets de alto rendimiento en Java.</p>
+ </div>
+ <div class="protocol-card">
+ <h4>Go (net package)</h4>
+ <p>Soporte nativo para programación concurrente de sockets con goroutines.</p>
+ </div>
+ </div>
+ </section>
+
+ <section>
+ <h2>Troubleshooting común</h2>
+ 
+ <h3>Problemas frecuentes y diagnóstico</h3>
+ <ul>
+ <li><strong>"Connection refused":</strong> Servicio no está ejecutándose o puerto bloqueado</li>
+ <li><strong>"Connection timeout":</strong> Firewall, latencia de red o servidor sobrecargado</li>
+ <li><strong>"Address already in use":</strong> Puerto ocupado, usar SO_REUSEADDR</li>
+ <li><strong>"Broken pipe":</strong> Conexión cerrada inesperadamente por el peer</li>
+ <li><strong>"Too many open files":</strong> Límite de descriptores de archivo alcanzado</li>
+ </ul>
+
+ <h3>Comandos de diagnóstico</h3>
+ <div class="command-box">
+ # Ver conexiones activas
+ lsof -i :8080
+ netstat -an | grep 8080
+ 
+ # Verificar límites del sistema
+ ulimit -n
+ cat /proc/sys/fs/file-max
+ 
+ # Monitorear uso de memoria de sockets
+ cat /proc/net/sockstat
+ </div>
+ </section>
+
+ <section>
+ <h2>Evolución y tendencias futuras</h2>
+ 
+ <h3>Tecnologías emergentes</h3>
+ <ul>
+ <li><strong>HTTP/3 y QUIC:</strong> Protocolo basado en UDP para mejor rendimiento web</li>
+ <li><strong>gRPC:</strong> Framework RPC de alto rendimiento sobre HTTP/2</li>
+ <li><strong>WebRTC:</strong> Comunicación peer-to-peer en tiempo real para navegadores</li>
+ <li><strong>5G y Edge Computing:</strong> Latencia ultra-baja cambia paradigmas de comunicación</li>
+ </ul>
+
+ <h3>Impacto de nuevas arquitecturas</h3>
+ <div class="highlight-box">
+ <strong>Tendencias futuras:</strong> Los sockets evolucionan hacia modelos más eficientes con 
+ soporte nativo para multiplexing, cifrado automático, y optimizaciones específicas para 
+ contenedores y computación sin servidor (serverless).
+ </div>
+ </section>
+
+ <section>
+ <h2>Ventajas y limitaciones</h2>
+ 
+ <h3>Ventajas principales</h3>
+ <ul>
+ <li><strong>Universalidad:</strong> Estándar soportado por todos los sistemas operativos modernos</li>
+ <li><strong>Flexibilidad:</strong> Adaptable a múltiples protocolos y patrones de comunicación</li>
+ <li><strong>Rendimiento:</strong> Acceso directo a capacidades de red del sistema operativo</li>
+ <li><strong>Escalabilidad:</strong> Con técnicas adecuadas, maneja miles de conexiones simultáneas</li>
+ <li><strong>Control granular:</strong> Configuración detallada de parámetros de red</li>
+ </ul>
+
+ <h3>Limitaciones y desafíos</h3>
+ <ul>
+ <li><strong>Complejidad:</strong> Programación de bajo nivel requiere manejo cuidadoso de errores</li>
+ <li><strong>Portabilidad:</strong> Diferencias sutiles entre sistemas operativos</li>
+ <li><strong>Gestión de recursos:</strong> Fácil crear leaks de memoria o descriptores</li>
+ <li><strong>Debugging:</strong> Problemas de red pueden ser difíciles de diagnosticar</li>
+ <li><strong>Seguridad:</strong> Requiere implementación cuidadosa de medidas de protección</li>
+ </ul>
+ </section>
+
+ <section>
+ <h2>Conclusión</h2>
+ <p>
+ Los sockets constituyen la base fundamental de prácticamente toda comunicación en red moderna, 
+ desde aplicaciones web simples hasta sistemas distribuidos complejos. Su comprensión profunda 
+ es esencial para cualquier desarrollador que trabaje con sistemas networked, ya que proporcionan 
+ el nivel de abstracción perfecto entre la simplicidad de uso y el control detallado de la comunicación.
+ </p>
+ <p>
+ La evolución continua de los sockets, impulsada por nuevos protocolos como QUIC y tecnologías 
+ emergentes como 5G, garantiza que seguirán siendo relevantes en el futuro de la computación 
+ distribuida. El dominio de los conceptos y técnicas de programación de sockets abre las puertas 
+ a la creación de aplicaciones robustas, escalables y eficientes.
+ </p>
+ <div class="highlight-box">
+ <strong>Recomendación para desarrolladores:</strong> Comenzar con implementaciones simples usando 
+ librerías de alto nivel, pero mantener una comprensión sólida de los conceptos subyacentes 
+ para optimización y troubleshooting avanzado.
+ </div>
+ </section>
+
+ <div class="volver">
+ <a href="../../index.html">← Volver al inicio</a>
+ </div>
+ </main>
 </body>
 </html>

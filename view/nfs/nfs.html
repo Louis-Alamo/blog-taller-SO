@@ -5,84 +5,359 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Gestión de Archivos con NFS</title>
   <link rel="stylesheet" href="../global-view.css" />
+  <link rel="stylesheet" href="nfs.css" />
 </head>
 <body>
-
   <header>
     <h1>Gestión de Archivos con NFS</h1>
-    <p>Protocolo para compartir archivos en red y facilitar el acceso remoto.</p>
+    <p>Protocolo para compartir archivos en red y facilitar el acceso remoto distribuido.</p>
   </header>
-
+  
   <main class="contenedor">
-
     <section>
       <h2>¿Qué es NFS?</h2>
       <p>
-        NFS (Network File System) es un protocolo desarrollado por Sun Microsystems que permite a los usuarios acceder a archivos a través de una red como si estuvieran almacenados localmente.
-        Es común en sistemas Unix y Linux.
+        NFS (Network File System) es un protocolo de sistema de archivos distribuido desarrollado originalmente 
+        por Sun Microsystems en 1984. Permite a los usuarios y aplicaciones acceder a archivos remotos a través 
+        de una red de manera transparente, como si estuvieran almacenados localmente en su sistema. 
+        Es fundamental en entornos Unix, Linux y sistemas POSIX.
       </p>
-    </section>
-
-    <section>
-      <h2>Características principales</h2>
-      <ul>
-        <li>Permite montar directorios remotos como si fueran locales.</li>
-        <li>Soporta múltiples clientes simultáneamente.</li>
-        <li>Basado en protocolos TCP/IP para comunicación.</li>
-        <li>Funciona con permisos y controles de acceso del sistema de archivos.</li>
-      </ul>
-    </section>
-
-    <section>
-      <h2>Ventajas de usar NFS</h2>
-      <ul>
-        <li>Centralización del almacenamiento y gestión.</li>
-        <li>Facilita la colaboración y compartición de datos.</li>
-        <li>Reduce la duplicidad de archivos.</li>
-        <li>Transparencia para el usuario final.</li>
-      </ul>
-    </section>
-
-    <section>
-      <h2>Componentes de NFS</h2>
+      <div class="highlight-box">
+        <strong>Principio fundamental:</strong> NFS opera bajo el concepto de "transparencia de ubicación", 
+        donde los usuarios no necesitan conocer la ubicación física real de los archivos para acceder a ellos.
+      </div>
       <p>
-        NFS consta de tres componentes clave:
+        El protocolo se basa en el modelo cliente-servidor y utiliza llamadas a procedimientos remotos (RPC) 
+        para la comunicación entre sistemas, estableciendo un estándar robusto para el acceso distribuido a archivos.
       </p>
+    </section>
+
+    <section>
+      <h2>Evolución y versiones de NFS</h2>
+      <table class="version-table">
+        <thead>
+          <tr>
+            <th>Versión</th>
+            <th>Año</th>
+            <th>Características principales</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>NFSv1</td>
+            <td>1984</td>
+            <td>Versión experimental, nunca liberada públicamente</td>
+          </tr>
+          <tr>
+            <td>NFSv2</td>
+            <td>1989</td>
+            <td>Primera versión pública, archivos de hasta 2GB, protocolo UDP</td>
+          </tr>
+          <tr>
+            <td>NFSv3</td>
+            <td>1995</td>
+            <td>Archivos de 64 bits, mejor rendimiento, soporte TCP</td>
+          </tr>
+          <tr>
+            <td>NFSv4</td>
+            <td>2000</td>
+            <td>Seguridad integrada, estado de conexión, mejor rendimiento</td>
+          </tr>
+          <tr>
+            <td>NFSv4.1</td>
+            <td>2010</td>
+            <td>Sesiones paralelas, pNFS (parallel NFS)</td>
+          </tr>
+          <tr>
+            <td>NFSv4.2</td>
+            <td>2016</td>
+            <td>Etiquetado de seguridad, sparse files, clonado de archivos</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Arquitectura y componentes</h2>
+      
+      <h3>Componentes principales</h3>
+      <div class="protocol-grid">
+        <div class="protocol-card">
+          <h4>Servidor NFS</h4>
+          <p>Máquina que exporta y comparte sistemas de archivos. Ejecuta el demonio nfsd y mantiene el estado de las conexiones.</p>
+        </div>
+        <div class="protocol-card">
+          <h4>Cliente NFS</h4>
+          <p>Sistema que monta y accede a los sistemas de archivos remotos usando llamadas RPC estándar.</p>
+        </div>
+        <div class="protocol-card">
+          <h4>Portmapper/rpcbind</h4>
+          <p>Servicio que mapea programas RPC a números de puerto específicos para la comunicación.</p>
+        </div>
+        <div class="protocol-card">
+          <h4>mountd</h4>
+          <p>Demonio que maneja las solicitudes de montaje y verifica los permisos de acceso.</p>
+        </div>
+      </div>
+
+      <h3>Flujo de comunicación</h3>
+      <p>
+        La comunicación NFS sigue un patrón específico: el cliente primero contacta al portmapper del servidor 
+        para obtener información de puertos, luego interactúa con mountd para montar el sistema de archivos, 
+        y finalmente se comunica directamente con nfsd para operaciones de archivo.
+      </p>
+    </section>
+
+    <section>
+      <h2>Características técnicas avanzadas</h2>
+      
+      <h3>Tipos de montaje</h3>
       <ul>
-        <li><strong>Servidor NFS:</strong> Máquina que comparte sus archivos.</li>
-        <li><strong>Cliente NFS:</strong> Máquina que accede a los archivos compartidos.</li>
-        <li><strong>Protocolo de transporte:</strong> Generalmente TCP o UDP.</li>
+        <li><strong>Hard mount:</strong> El cliente reintenta indefinidamente si el servidor no responde</li>
+        <li><strong>Soft mount:</strong> El cliente devuelve error después de un número determinado de reintentos</li>
+        <li><strong>Intr mount:</strong> Permite interrumpir operaciones NFS con señales del sistema</li>
+      </ul>
+
+      <h3>Mecanismos de caché</h3>
+      <ul>
+        <li><strong>Attribute caching:</strong> Almacena metadatos de archivos para reducir llamadas RPC</li>
+        <li><strong>Data caching:</strong> Mantiene contenido de archivos en memoria local</li>
+        <li><strong>Write-back caching:</strong> Agrupa escrituras para mejorar rendimiento</li>
+      </ul>
+
+      <div class="highlight-box">
+        <strong>Consistencia de datos:</strong> NFS utiliza un modelo de consistencia eventual, 
+        donde los cambios pueden no ser inmediatamente visibles en todos los clientes.
+      </div>
+    </section>
+
+    <section>
+      <h2>Configuración y administración</h2>
+      
+      <h3>Configuración del servidor</h3>
+      <p>El archivo principal de configuración es <code>/etc/exports</code>, donde se definen los directorios exportados y sus permisos:</p>
+      
+      <div class="command-box">
+        # Ejemplo de /etc/exports
+        /home/shared    192.168.1.0/24(rw,sync,no_subtree_check)
+        /var/www        *.example.com(ro,sync)
+        /data/backup    client1.local(rw,no_root_squash)
+      </div>
+
+      <h3>Comandos administrativos esenciales</h3>
+      <div class="command-box">
+        # Exportar directorios después de modificar /etc/exports
+        sudo exportfs -ra
+
+        # Ver exportaciones activas
+        showmount -e localhost
+
+        # Montar sistema de archivos NFS (cliente)
+        sudo mount -t nfs server:/path/to/share /local/mount/point
+
+        # Ver estadísticas NFS
+        nfsstat -s    # servidor
+        nfsstat -c    # cliente
+      </div>
+
+      <h3>Opciones de montaje importantes</h3>
+      <ul>
+        <li><strong>rsize/wsize:</strong> Tamaño de bloques para lectura/escritura (por defecto 1MB en NFSv4)</li>
+        <li><strong>timeo:</strong> Tiempo de espera antes de reintento (décimas de segundo)</li>
+        <li><strong>retrans:</strong> Número de retransmisiones antes de error</li>
+        <li><strong>vers:</strong> Especifica la versión de NFS a usar</li>
+        <li><strong>sec:</strong> Método de seguridad (krb5, krb5i, krb5p)</li>
       </ul>
     </section>
 
     <section>
-      <h2>Funcionamiento básico</h2>
-      <p>
-        El cliente NFS solicita acceso a archivos mediante llamadas a procedimientos remotos (RPC) al servidor, que responde con los datos solicitados, permitiendo operaciones de lectura, escritura y gestión.
-      </p>
-    </section>
-
-    <section>
-      <h2>Ejemplo práctico</h2>
-      <p>
-        En una red de oficinas, un servidor central puede compartir una carpeta con todos los empleados usando NFS, de modo que cada usuario puede acceder y modificar documentos sin necesidad de copias locales.
-      </p>
-    </section>
-
-    <section>
-      <h2>Limitaciones</h2>
+      <h2>Ventajas y beneficios</h2>
+      
+      <h3>Ventajas operativas</h3>
       <ul>
-        <li>Dependencia de la red: si la conexión falla, el acceso a archivos se interrumpe.</li>
-        <li>Problemas de seguridad si no se configura adecuadamente.</li>
-        <li>Puede no ser la mejor opción en redes lentas o inestables.</li>
+        <li><strong>Centralización eficiente:</strong> Almacenamiento y gestión centralizada de datos críticos</li>
+        <li><strong>Escalabilidad horizontal:</strong> Fácil adición de nuevos clientes sin reconfiguración mayor</li>
+        <li><strong>Transparencia total:</strong> Aplicaciones funcionan sin modificaciones en archivos remotos</li>
+        <li><strong>Consistencia de datos:</strong> Una sola fuente de verdad para archivos compartidos</li>
+        <li><strong>Backup simplificado:</strong> Respaldo centralizado en lugar de múltiples ubicaciones</li>
       </ul>
+
+      <h3>Ventajas técnicas</h3>
+      <ul>
+        <li><strong>Interoperabilidad:</strong> Funciona entre diferentes sistemas Unix/Linux</li>
+        <li><strong>Rendimiento optimizado:</strong> Caché inteligente y operaciones asíncronas</li>
+        <li><strong>Recuperación automática:</strong> Reconexión transparente tras interrupciones de red</li>
+        <li><strong>Control granular:</strong> Permisos detallados por cliente, red o usuario</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Casos de uso empresariales</h2>
+      
+      <div class="example-box">
+        <h4>Entorno de desarrollo colaborativo</h4>
+        <p>Equipos de desarrollo que comparten código fuente, documentación y recursos. Un servidor NFS 
+        central almacena repositorios, permitiendo acceso simultáneo con control de versiones integrado.</p>
+      </div>
+
+      <div class="example-box">
+        <h4>Cluster de cómputo científico</h4>
+        <p>Laboratorios de investigación donde múltiples nodos de cálculo necesitan acceder a grandes 
+        conjuntos de datos. NFS proporciona acceso uniforme a datos experimentales y resultados.</p>
+      </div>
+
+      <div class="example-box">
+        <h4>Infraestructura de servidores web</h4>
+        <p>Farm de servidores web que comparten contenido estático, configuraciones y logs. 
+        NFS permite actualizaciones centralizadas y balanceadores de carga distribuidos.</p>
+      </div>
+
+      <div class="example-box">
+        <h4>Estaciones de trabajo sin disco</h4>
+        <p>Terminales ligeras o estaciones diskless que cargan su sistema operativo y aplicaciones 
+        completamente desde servidores NFS, reduciendo costos de hardware y mantenimiento.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Seguridad en NFS</h2>
+      
+      <h3>Mecanismos de seguridad</h3>
+      <ul>
+        <li><strong>Host-based security:</strong> Control de acceso basado en direcciones IP y nombres de host</li>
+        <li><strong>Kerberos integration:</strong> Autenticación fuerte con tickets criptográficos</li>
+        <li><strong>IPsec tunneling:</strong> Cifrado de comunicaciones a nivel de red</li>
+        <li><strong>Root squashing:</strong> Mapeo del usuario root a nobody para prevenir escalación</li>
+      </ul>
+
+      <h3>Mejores prácticas de seguridad</h3>
+      <div class="warning-box">
+        <strong>Recomendaciones críticas:</strong>
+        <ul>
+          <li>Usar NFSv4 con Kerberos para entornos de producción</li>
+          <li>Implementar firewalls para restringir acceso a puertos NFS</li>
+          <li>Habilitar logging detallado para auditoria</li>
+          <li>Configurar redes dedicadas para tráfico NFS cuando sea posible</li>
+          <li>Evitar exportar directorios root o sensibles</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Optimización y rendimiento</h2>
+      
+      <h3>Factores que afectan el rendimiento</h3>
+      <ul>
+        <li><strong>Latencia de red:</strong> Tiempo de ida y vuelta entre cliente y servidor</li>
+        <li><strong>Ancho de banda:</strong> Capacidad de transferencia de datos</li>
+        <li><strong>Carga del servidor:</strong> CPU, memoria y E/O del servidor NFS</li>
+        <li><strong>Tipo de carga de trabajo:</strong> Lectura vs escritura, archivos grandes vs pequeños</li>
+      </ul>
+
+      <h3>Técnicas de optimización</h3>
+      <ul>
+        <li><strong>Ajustar tamaños de bloque:</strong> rsize y wsize según el ancho de banda</li>
+        <li><strong>Usar NFSv4.1+ con pNFS:</strong> Paralelización para mejor throughput</li>
+        <li><strong>Configurar caché del cliente:</strong> Equilibrar consistencia vs rendimiento</li>
+        <li><strong>Optimizar red:</strong> Jumbo frames, TCP window scaling</li>
+        <li><strong>SSD en servidor:</strong> Almacenamiento rápido para metadatos y caché</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Troubleshooting común</h2>
+      
+      <h3>Problemas frecuentes y soluciones</h3>
+      <ul>
+        <li><strong>"Stale file handle":</strong> Reiniciar servicios NFS o remontar sistemas de archivos</li>
+        <li><strong>Montajes colgados:</strong> Usar mount -f para forzar desmontaje</li>
+        <li><strong>Permisos incorrectos:</strong> Verificar mapeo de usuarios y grupos (idmapd)</li>
+        <li><strong>Timeouts frecuentes:</strong> Ajustar valores timeo y retrans</li>
+        <li><strong>Rendimiento lento:</strong> Analizar con nfsstat y tcpdump</li>
+      </ul>
+
+      <h3>Herramientas de diagnóstico</h3>
+      <div class="command-box">
+        # Verificar conectividad RPC
+        rpcinfo -p servidor_nfs
+
+        # Monitorear operaciones NFS en tiempo real
+        sudo tcpdump -i eth0 port 2049
+
+        # Verificar locks de archivos
+        cat /proc/locks | grep nfs
+      </div>
+    </section>
+
+    <section>
+      <h2>Limitaciones y consideraciones</h2>
+      
+      <h3>Limitaciones técnicas</h3>
+      <ul>
+        <li><strong>Dependencia de red:</strong> Fallas de conectividad afectan acceso a archivos críticos</li>
+        <li><strong>Punto único de falla:</strong> El servidor NFS puede convertirse en cuello de botella</li>
+        <li><strong>Consistencia limitada:</strong> No garantiza consistencia inmediata entre clientes</li>
+        <li><strong>Complejidad de firewall:</strong> Múltiples puertos dinámicos complican configuración</li>
+      </ul>
+
+      <h3>Cuándo no usar NFS</h3>
+      <div class="warning-box">
+        <strong>Escenarios no recomendados:</strong>
+        <ul>
+          <li>Bases de datos con alta concurrencia de escritura</li>
+          <li>Aplicaciones que requieren bloqueo estricto de archivos</li>
+          <li>Redes con alta latencia o baja confiabilidad</li>
+          <li>Entornos donde la seguridad es crítica y no se puede usar Kerberos</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Alternativas y tecnologías relacionadas</h2>
+      
+      <div class="protocol-grid">
+        <div class="protocol-card">
+          <h4>SMB/CIFS</h4>
+          <p>Mejor para entornos Windows/Linux mixtos con autenticación Active Directory.</p>
+        </div>
+        <div class="protocol-card">
+          <h4>GlusterFS</h4>
+          <p>Sistema de archivos distribuido que elimina el punto único de falla.</p>
+        </div>
+        <div class="protocol-card">
+          <h4>Ceph FS</h4>
+          <p>Sistema de archivos distribuido altamente escalable para clusters grandes.</p>
+        </div>
+        <div class="protocol-card">
+          <h4>SSHFS</h4>
+          <p>Montaje de sistemas de archivos remotos sobre SSH, más seguro pero menos eficiente.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Conclusión</h2>
+      <p>
+        NFS continúa siendo una tecnología fundamental para la gestión de archivos distribuidos en entornos Unix/Linux, 
+        especialmente relevante en infraestructuras empresariales, centros de datos y entornos de computación de 
+        alto rendimiento. Su evolución hacia NFSv4.2 ha mejorado significativamente la seguridad, rendimiento y 
+        funcionalidades avanzadas.
+      </p>
+      <p>
+        El éxito de una implementación NFS depende de una planificación cuidadosa que considere los requisitos 
+        de seguridad, rendimiento y disponibilidad específicos del entorno. Con la configuración adecuada y 
+        las mejores prácticas implementadas, NFS proporciona una solución robusta y eficiente para el acceso 
+        distribuido a archivos en redes empresariales.
+      </p>
+      <div class="highlight-box">
+        <strong>Recomendación final:</strong> Para nuevas implementaciones, utilizar NFSv4 con autenticación 
+        Kerberos y considerar arquitecturas distribuidas para eliminar puntos únicos de falla en entornos críticos.
+      </div>
     </section>
 
     <div class="volver">
       <a href="../../index.html">← Volver al inicio</a>
     </div>
-
   </main>
-
 </body>
 </html>
